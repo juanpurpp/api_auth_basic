@@ -90,6 +90,23 @@ const findUsers = async (req) => {
         })
     };
 }
+const bulkCreate = async (req) => {
+    const users = await Promise.all(req.body.map(
+        async user => ({
+            name: user.name,
+            email: user.email,
+            password: await bcrypt.hash(user.password, 10),
+            cellphone: user.cellphone,
+            status: true
+        })
+    ))
+    await db.User.bulkCreate(users);
+    return {
+        code: 200,
+        message: 'Users created successfully'
+    };
+
+}
 const updateUser = async (req) => {
     const user = db.User.findOne({
         where: {
@@ -140,6 +157,7 @@ const deleteUser = async (id) => {
 
 export default {
     createUser,
+    bulkCreate,
     getUserById,
     getAllActiveUsers,
     findUsers,

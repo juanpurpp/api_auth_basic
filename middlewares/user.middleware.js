@@ -29,7 +29,39 @@ const hasPermissions = async (req, res, next) => {
     next();
 }
 
+const arrayValidFormat = async (req, res, next) => {
+    const newUsers = req.body;
+    if (!Array.isArray(newUsers)) {
+        return res.status(400).json({
+            message: 'Body must be an array'
+        });
+    }
+    if (newUsers.length === 0) {
+        return res.status(400).json({
+            message: 'Array must have at least one element'
+        });
+    }
+    if (newUsers.some(element => typeof element !== 'object')) {
+        return res.status(400).json({
+            message: 'Array must have only objects'
+        });
+    }
+    if (newUsers.some(element => Object.keys(element).length === 0)) {
+        return res.status(400).json({
+            message: 'Objects must have at least one key'
+        });
+    }
+
+    for(const [index,user] of newUsers.entries()) {
+        if (user.name === '' || typeof user.name !== 'string') return res.status(400).json({ message: `Item ${index}: Name must be a string` });
+        if (user.email === '' || typeof user.email !== 'string') return res.status(400).json({ message: `Item ${index}: Email must be a string` });
+        if (user.password === '' || typeof user.password !== 'string') return res.status(400).json({ message: `Item ${index}: Password must be a string` });
+        if (user.cellphone === '' || typeof user.cellphone !== 'string') return res.status(400).json({ message: `Item ${index}: Cellphone must be a string` });
+    }
+    next();
+}
 export default {
     isValidUserById,
-    hasPermissions
+    hasPermissions,
+    arrayValidFormat
 };

@@ -3,13 +3,20 @@ import UserService from '../services/UserService.js';
 import NumberMiddleware from '../middlewares/number.middleware.js';
 import UserMiddleware from '../middlewares/user.middleware.js';
 import AuthMiddleware from '../middlewares/auth.middleware.js';
+import userMiddleware from '../middlewares/user.middleware.js';
 
 const router = Router();
-
+const reservedSubroutesNames = ['getAllUsers', 'findUsers'];
 router.post('/create', async (req, res) => {
     const response = await UserService.createUser(req);
     res.status(response.code).json(response.message);
 });
+router.post('/bulkCreate', 
+    [userMiddleware.arrayValidFormat, AuthMiddleware.validateToken], 
+    async (req, res) => {
+    const response = await UserService.bulkCreate(req);
+    res.status(response.code).json(response.message);
+})
 router.get(
     '/getAllUsers',
     [
@@ -39,7 +46,7 @@ router.get(
         UserMiddleware.hasPermissions
     ],
     async (req, res) => {
-        if (req.params.id === 'getAllUsers' || req.params.id === 'findUsers') return next(); //telling express to ignore if params is a subroute
+        if (reservedSubroutesNames.includes(req.params.id)) return next(); //telling express to ignore if param is a subroute
         const response = await UserService.getUserById(req.params.id);
         res.status(response.code).json(response.message);
     });
