@@ -3,7 +3,6 @@ import UserService from '../services/UserService.js';
 import NumberMiddleware from '../middlewares/number.middleware.js';
 import UserMiddleware from '../middlewares/user.middleware.js';
 import AuthMiddleware from '../middlewares/auth.middleware.js';
-import userMiddleware from '../middlewares/user.middleware.js';
 
 const router = Router();
 const reservedSubroutesNames = ['getAllUsers', 'findUsers'];
@@ -12,7 +11,7 @@ router.post('/create', async (req, res) => {
     res.status(response.code).json(response.message);
 });
 router.post('/bulkCreate', 
-    [userMiddleware.arrayValidFormat, AuthMiddleware.validateToken], 
+    [UserMiddleware.arrayValidFormat, AuthMiddleware.validateToken], 
     async (req, res) => {
     const response = await UserService.bulkCreate(req);
     res.status(response.code).json(response.message);
