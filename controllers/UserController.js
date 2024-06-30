@@ -21,6 +21,16 @@ router.get(
     }
 )
 router.get(
+    '/findUsers',
+    [
+        AuthMiddleware.validateToken,
+    ],
+    async (req, res) => {
+        const response = await UserService.findUsers(req);
+        res.status(response.code).json(response.message);
+    }
+)
+router.get(
     '/:id',
     [
         NumberMiddleware.isNumber,
@@ -29,7 +39,7 @@ router.get(
         UserMiddleware.hasPermissions
     ],
     async (req, res) => {
-        if (req.params.id === 'getAllUsers') return next();
+        if (req.params.id === 'getAllUsers' || req.params.id === 'findUsers') return next(); //telling express to ignore if params is a subroute
         const response = await UserService.getUserById(req.params.id);
         res.status(response.code).json(response.message);
     });
