@@ -54,6 +54,18 @@ const getUserById = async (id) => {
     };
 }
 
+const getAllActiveUsers = async () => {
+    return {
+        code: 200,
+        message: await db.User.findAll({
+            where: {
+                status: 1
+            }
+        })
+    };
+
+}
+
 const updateUser = async (req) => {
     const user = db.User.findOne({
         where: {
@@ -105,6 +117,7 @@ const deleteUser = async (id) => {
 export default {
     createUser,
     getUserById,
+    getAllActiveUsers,
     updateUser,
     deleteUser,
 }

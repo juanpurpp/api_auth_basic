@@ -10,7 +10,16 @@ router.post('/create', async (req, res) => {
     const response = await UserService.createUser(req);
     res.status(response.code).json(response.message);
 });
-
+router.get(
+    '/getAllUsers',
+    [
+        AuthMiddleware.validateToken,
+    ],
+    async (_, res) => {
+        const response = await UserService.getAllActiveUsers();
+        res.status(response.code).json(response.message);
+    }
+)
 router.get(
     '/:id',
     [
@@ -20,6 +29,7 @@ router.get(
         UserMiddleware.hasPermissions
     ],
     async (req, res) => {
+        if (req.params.id === 'getAllUsers') return next();
         const response = await UserService.getUserById(req.params.id);
         res.status(response.code).json(response.message);
     });
