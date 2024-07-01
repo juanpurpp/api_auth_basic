@@ -66,10 +66,10 @@ const getAllActiveUsers = async () => {
 
 }
 const findUsers = async (req) => {
-    const { q, deleted, connectedBefore, connectedAfter } = req.query;
+    const { q, active, login_before_date, login_after_date } = req.query;
     const where = { //using conditional prop technique, if variable is passed then is added to where object only if exists
         ...( q && { name: { [db.Sequelize.Op.like]: `%${q}%` }}),
-        ...( deleted === 'true' || deleted === 1 && { status: 0 }),
+        ...( active === 'true' || active === 1 && { status: 0 }),
     };
     return {
         code: 200,
@@ -81,8 +81,8 @@ const findUsers = async (req) => {
                 where: { // using conditional prop technique also
                     createdAt:{
                         [db.Sequelize.Op.and]:[
-                            ... connectedBefore ? [{ [db.Sequelize.Op.lt]: connectedBefore }] : [],
-                            ... connectedAfter ? [{ [db.Sequelize.Op.gt]: connectedAfter }] : [],
+                            ... login_before_date ? [{ [db.Sequelize.Op.lt]: login_before_date }] : [],
+                            ... login_after_date ? [{ [db.Sequelize.Op.gt]: login_after_date }] : [],
                         ]
                     }
                 }
