@@ -67,9 +67,9 @@ const getAllActiveUsers = async () => {
 
 }
 const findUsers = async (req) => {
-    const { q, active, login_before_date, login_after_date } = req.query;
+    const { name, active, login_before_date, login_after_date } = req.query;
     const where = { //using conditional prop technique, if variable is passed then is added to where object only if exists
-        ...( q && { name: { [db.Sequelize.Op.like]: `%${q}%` }}),
+        ...( name && { name: { [db.Sequelize.Op.like]: `%${name}%` }}),
         ...( active === 'true' || active === 1 && { status: 0 }),
     };
     return {
