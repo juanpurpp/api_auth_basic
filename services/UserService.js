@@ -91,7 +91,7 @@ const findUsers = async (req) => {
     };
 }
 const bulkCreate = async (req) => {
-    const users = await Promise.all(req.body.map(
+    const users = await Promise.all(req.locals.load.map(
         async user => ({
             name: user.name,
             email: user.email,
@@ -103,7 +103,7 @@ const bulkCreate = async (req) => {
     await db.User.bulkCreate(users);
     return {
         code: 200,
-        message: 'Users created successfully'
+        message: `${req.locals.load.length} users created successfully. ${req.locals.eliminated} were not created due to invalid data.`
     };
 
 }

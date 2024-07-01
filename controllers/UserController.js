@@ -13,6 +13,7 @@ router.post('/create', async (req, res) => {
 router.post('/bulkCreate', 
     [UserMiddleware.arrayValidFormat, AuthMiddleware.validateToken], 
     async (req, res) => {
+    req.locals = res.locals
     const response = await UserService.bulkCreate(req);
     res.status(response.code).json(response.message);
 })

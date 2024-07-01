@@ -2,7 +2,7 @@ import db from '../dist/db/models/index.js';
 
 const isValidUserById = async (req, res, next) => {
     const id = req.params.id;
-    const response = db.User.findOne({
+    const response = await db.User.findOne({
         where: {
             id: id,
             status: true,
@@ -52,12 +52,23 @@ const arrayValidFormat = async (req, res, next) => {
         });
     }
 
-    for(const [index,user] of newUsers.entries()) {
-        if (user.name === '' || typeof user.name !== 'string') return res.status(400).json({ message: `Item ${index}: Name must be a string` });
-        if (user.email === '' || typeof user.email !== 'string') return res.status(400).json({ message: `Item ${index}: Email must be a string` });
-        if (user.password === '' || typeof user.password !== 'string') return res.status(400).json({ message: `Item ${index}: Password must be a string` });
-        if (user.cellphone === '' || typeof user.cellphone !== 'string') return res.status(400).json({ message: `Item ${index}: Cellphone must be a string` });
+    const load = []
+    for(const user of newUsers) {
+        const exists = await db.User.findOne({
+            where: {
+                email: user.email,
+            }
+        });
+
+        if (exists) continue;
+        if (user.name === '' || typeof user.name !== 'string') continue;
+        if (user.email === '' || typeof user.email !== 'string') continue;
+        if (user.password === '' || typeof user.password !== 'string') continue;
+        if (user.cellphone === '' || typeof user.cellphone !== 'string') continue;
+        load.push(user);
     }
+    res.locals.load = load
+    res.locals.eliminated = newUsers.length - load.length
     next();
 }
 export default {
