@@ -58,6 +58,7 @@ const getAllActiveUsers = async () => {
     return {
         code: 200,
         message: await db.User.findAll({
+            attributes: {exclude: ['password']},
             where: {
                 status: 1
             }
@@ -74,6 +75,7 @@ const findUsers = async (req) => {
     return {
         code: 200,
         message: await db.User.findAll({
+            attributes: {exclude: ['password']},
             where: where,
             include: [{
                 model: db.Session,
