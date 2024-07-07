@@ -81,7 +81,7 @@ const findUsers = async (req) => {
                 model: db.Session,
                 attributes: [], //excluding session data so we dont expose tokens'
                 where: { // using conditional prop technique also
-                    createdAt:{
+                    updateAt:{
                         [db.Sequelize.Op.and]:[
                             ... login_before_date ? [{ [db.Sequelize.Op.lt]: login_before_date }] : [],
                             ... login_after_date ? [{ [db.Sequelize.Op.gt]: login_after_date }] : [],
