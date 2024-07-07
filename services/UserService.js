@@ -79,7 +79,7 @@ const findUsers = async (req) => {
             where: where,
             include: [{
                 model: db.Session,
-                attributes: [], //excluding session data so we dont expose tokens'
+                attributes: ['createdAt'], //excluding session data so we dont expose tokens'
                 where: { // using conditional prop technique also
                     createdAt:{
                         [db.Sequelize.Op.and]:[
