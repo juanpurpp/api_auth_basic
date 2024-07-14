@@ -77,7 +77,7 @@ const findUsers = async (req) => {
     }
     return {
         code: 200,
-        message: await db.User.findAll({
+        message: (await db.User.findAll({
             attributes: {exclude: ['password']},
             where: where,
             include: [{
@@ -90,9 +90,13 @@ const findUsers = async (req) => {
                             ... login_after_date ? [{ [db.Sequelize.Op.gt]: login_after_date }] : [],
                         ]
                     }
-                }
+                },
+                limit: 1,
+                
+                order: [ [ 'createdAt', 'DESC' ]],
+                required: login_after_date || login_before_date ? true : false,
             }]
-        })
+        })).filter(item=> login_after_date || login_before_date ? item.Sessions.length > 0 : true)
     };
 }
 const bulkCreate = async (req) => {
